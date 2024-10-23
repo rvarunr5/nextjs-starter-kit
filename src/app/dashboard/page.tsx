@@ -7,7 +7,7 @@ export default async function Dashboard() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log("dashboard page props", user);
+  // console.log("dashboard page props", user);
   if (!user) {
     redirect("/signup");
   }

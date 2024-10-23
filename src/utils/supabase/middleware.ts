@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const protectedRoutes = ["/dashboard"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -37,13 +39,23 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Redirect logged-in users away from auth pages
   if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/signin") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    user &&
+    (request.nextUrl.pathname.startsWith("/signin") ||
+      request.nextUrl.pathname.startsWith("/signup"))
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    return NextResponse.redirect(redirectUrl);
+  }
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
+    console.log(url);
     url.pathname = "/signin";
     return NextResponse.redirect(url);
   }

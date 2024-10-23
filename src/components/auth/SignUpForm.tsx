@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { signupSchema, SignupSchemaProps } from "@/lib/schema/signupSchema";
 import { signup } from "@/app/actions/auth/signup";
 import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function SignUpForm() {
   async function onSubmit(values: SignupSchemaProps) {
     try {
       const response = await signup(values);
-      console.log(response, "this is the response in sign up form");
+
       if (response.error) {
         setError(response.error);
       }
@@ -54,7 +55,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="varun@example.com" {...field} />
+                <Input placeholder="test@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,6 +90,7 @@ export default function SignUpForm() {
         <Button type="submit" className="w-full">
           Sign up
         </Button>
+        {error && <div className="text-red-500">{error}</div>}
       </form>
     </Form>
   );

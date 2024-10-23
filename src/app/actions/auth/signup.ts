@@ -10,14 +10,10 @@ import { NextResponse } from "next/server";
 export async function signup(values: SignupSchemaProps) {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const signUpData = {
     email: values.email,
     password: values.password,
   };
-
-  console.log(signUpData);
 
   const {
     data: { user },
@@ -25,10 +21,9 @@ export async function signup(values: SignupSchemaProps) {
   } = await supabase.auth.signUp(signUpData);
 
   if (error) {
-    // redirect("/error");
     return { error: "Something went wrong", success: false };
   }
-  console.log({ user });
+
   if (!user?.confirmed_at) {
     return { success: true, requiresEmailVerification: true };
   }
