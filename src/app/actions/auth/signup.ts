@@ -21,7 +21,7 @@ export async function signup(values: SignupSchemaProps) {
   } = await supabase.auth.signUp(signUpData);
 
   if (error) {
-    return { error: "Something went wrong", success: false };
+    return { error: error.message, success: false };
   }
 
   if (!user?.confirmed_at) {

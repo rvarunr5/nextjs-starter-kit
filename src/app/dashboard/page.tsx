@@ -8,13 +8,11 @@ export default async function Dashboard() {
     data: { user },
   } = await supabase.auth.getUser();
   // console.log("dashboard page props", user);
-  if (!user) {
-    redirect("/signup");
-  }
+
   return (
     <div>
       Dashboard page
-      {user.email}
+      {user?.email}
       <LogoutButton />
     </div>
   );

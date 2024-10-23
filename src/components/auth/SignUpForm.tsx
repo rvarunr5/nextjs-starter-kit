@@ -39,8 +39,11 @@ export default function SignUpForm() {
         setError(response.error);
       }
       if (response.success) {
-        if (response.requiresEmailVerification) router.push("/verify-email");
-        else router.push("/dashboard");
+        if (response.requiresEmailVerification) {
+          router.push("/verify-email");
+          return;
+        }
+        router.push("/dashboard");
       }
     } catch (e) {
       console.error("Signup error: ", e);
