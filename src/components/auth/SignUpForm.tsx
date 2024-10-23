@@ -17,6 +17,7 @@ import { signupSchema, SignupSchemaProps } from "@/lib/schema/signupSchema";
 import { signup } from "@/app/actions/auth/signup";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -90,6 +91,12 @@ export default function SignUpForm() {
         <Button type="submit" className="w-full">
           Sign up
         </Button>
+        <div className="text-sm text-center">
+          Already have an account?{" "}
+          <Link href="/signin" className="underline text-blue-500">
+            Sign in
+          </Link>
+        </div>
         {error && <div className="text-red-500">{error}</div>}
       </form>
     </Form>

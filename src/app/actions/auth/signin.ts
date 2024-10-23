@@ -1,25 +1,33 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
 import { SignInSchemaProps } from "@/lib/schema/signinSchema";
+import { AuthApiError } from "@supabase/supabase-js";
 
-export async function signin(values: SignInSchemaProps) {
+type SignInResponse = {
+  error?: string;
+  requiresEmailVerification?: boolean;
+  success?: boolean;
+};
+
+export async function signin(
+  values: SignInSchemaProps
+): Promise<SignInResponse> {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
+  const { error } = await supabase.auth.signInWithPassword({
     email: values.email,
     password: values.password,
-  };
-
-  const { error } = await supabase.auth.signInWithPassword(data);
+  });
 
   if (error) {
-    return { error: "Something went wrong", success: false };
+    if (error instanceof AuthApiError)
+      if (error.code === "email_not_confirmed")
+        return {
+          error: "Please verify your email before signing in",
+          requiresEmailVerification: true,
+        };
+    return { error: error.message };
   }
 
   // revalidatePath("/", "layout");

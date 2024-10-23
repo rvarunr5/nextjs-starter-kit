@@ -15,8 +15,15 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signin } from "@/app/actions/auth/signin";
 import { signinSchema, SignInSchemaProps } from "@/lib/schema/signinSchema";
+import Link from "next/link";
+import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { XCircleIcon } from "lucide-react";
 
 export default function SignInForm() {
+  const [error, setError] = useState("");
+  const [resending, setIsResending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<SignInSchemaProps>({
     resolver: zodResolver(signinSchema),
@@ -26,12 +33,44 @@ export default function SignInForm() {
     },
   });
 
+  async function handleResendVerification() {
+    try {
+      setIsResending(true);
+      const email = form.getValues("email");
+      const supabase = createClient();
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+      if (error) setError(error.message || "");
+      else {
+        setError("");
+        router.push("/verify-email");
+      }
+    } catch (e) {
+      setError("Failed to resend verification email");
+    } finally {
+      setIsResending(false);
+    }
+  }
+
   async function onSubmit(values: SignInSchemaProps) {
-    const response = await signin(values);
-    if (response.success) {
-      router.push("/dashboard");
-    } else {
-      console.log(response.error);
+    try {
+      setError("");
+      setIsLoading(true);
+      const response = await signin(values);
+
+      if (response.success) {
+        router.push("/dashboard");
+      }
+      if (response.error) {
+        setError(response.error || "");
+        return;
+      }
+    } catch (e) {
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   }
   return (
@@ -63,10 +102,31 @@ export default function SignInForm() {
             </FormItem>
           )}
         />
-
-        <Button type="submit" className="w-full">
-          Sign in
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Signing in..." : "Sign in"}
         </Button>
+        <div className="text-sm text-center">
+          Don't have an account?{" "}
+          <Link href="/signup" className="underline text-blue-500">
+            Sign up
+          </Link>
+        </div>
+        {error && (
+          <div className="text-center">
+            <div className="flex items-center justify-center">
+              <XCircleIcon className="h-4 w-4 text-red-500" />
+              <p className="ml-1 text-sm font-medium text-red-500">{error}</p>
+            </div>
+            {error.includes("verify") && (
+              <p
+                className="underline text-sm text-blue-500 mt-2 cursor-pointer"
+                onClick={() => handleResendVerification()}
+              >
+                {resending ? "Resending..." : "Resend verification email"}
+              </p>
+            )}
+          </div>
+        )}
       </form>
     </Form>
   );
