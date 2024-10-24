@@ -102,12 +102,15 @@ export default function SignInForm() {
             </FormItem>
           )}
         />
+        <Link href="/forgot-password" className="text-sm text-blue-500 block">
+          Forgot password?
+        </Link>
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Signing in..." : "Sign in"}
         </Button>
         <div className="text-sm text-center">
           Don't have an account?{" "}
-          <Link href="/signup" className="underline text-blue-500">
+          <Link href="/signup" className="text-blue-500">
             Sign up
           </Link>
         </div>

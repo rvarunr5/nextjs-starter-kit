@@ -22,6 +22,7 @@ import Link from "next/link";
 export default function SignUpForm() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<SignupSchemaProps>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -33,10 +34,13 @@ export default function SignUpForm() {
 
   async function onSubmit(values: SignupSchemaProps) {
     try {
+      setError("");
+      setIsLoading(true);
       const response = await signup(values);
 
       if (response.error) {
         setError(response.error);
+        return;
       }
       if (response.success) {
         if (response.requiresEmailVerification) {
@@ -46,7 +50,9 @@ export default function SignUpForm() {
         router.push("/dashboard");
       }
     } catch (e) {
-      console.error("Signup error: ", e);
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   }
   return (
@@ -91,8 +97,8 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Sign up
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Signing up..." : "Sign up"}
         </Button>
         <div className="text-sm text-center">
           Already have an account?{" "}
