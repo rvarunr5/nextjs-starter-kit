@@ -3,6 +3,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { SignInSchemaProps } from "@/lib/schema/signinSchema";
 import { AuthApiError } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 type SignInResponse = {
   error?: string;
@@ -23,13 +25,12 @@ export async function signin(
   if (error) {
     if (error instanceof AuthApiError)
       if (error.code === "email_not_confirmed")
-        return {
-          error: "Please verify your email before signing in",
-          requiresEmailVerification: true,
-        };
-    return { error: error.message };
+        redirect(
+          "/signin?message=Please verify your email before signing in&requireEmailVerification=true"
+        );
+    redirect("/signin?message=Couldn't authenticate user");
   }
 
-  // revalidatePath("/", "layout");
-  return { success: true };
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
 }

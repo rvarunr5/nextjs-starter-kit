@@ -18,10 +18,14 @@ import { signup } from "@/app/actions/auth/signup";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
-import { XCircleIcon } from "lucide-react";
+import { CheckCircle2, XCircleIcon } from "lucide-react";
 import ButtonLoading from "../loading/ButtonLoading";
 
-export default function SignUpForm() {
+export default function SignUpForm({
+  searchParams,
+}: {
+  searchParams: { message?: string; requireEmailVerification?: boolean };
+}) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,23 +40,13 @@ export default function SignUpForm() {
 
   async function onSubmit(values: SignupSchemaProps) {
     try {
-      setError("");
       setIsLoading(true);
-      const response = await signup(values);
-
-      if (response.error) {
-        setError(response.error);
-        return;
-      }
-      if (response.success) {
-        if (response.requiresEmailVerification) {
-          router.push("/verify-email");
-          return;
-        }
-        router.push("/dashboard");
-      }
+      await signup(values);
+      form.reset();
     } catch (e) {
-      setError("An unexpected error occurred");
+      console.error("Something went wrong", e);
+      setIsLoading(false);
+    } finally {
       setIsLoading(false);
     }
   }
@@ -111,12 +105,23 @@ export default function SignUpForm() {
             Sign in
           </Link>
         </div>
-        {error && (
+        {searchParams.message && (
           <div className="text-center">
-            <div className="flex items-center justify-center">
-              <XCircleIcon className="h-4 w-4 text-red-500" />
-              <p className="ml-1 text-sm font-medium text-red-500">{error}</p>
-            </div>
+            {searchParams.message.includes("verify") ? (
+              <div className="flex justify-center items-normal">
+                <CheckCircle2 className="h-4 w-4 text-green-700 mt-0.5" />
+                <p className="text-green-700 text-sm ml-1">
+                  {searchParams.message}
+                </p>
+              </div>
+            ) : (
+              <div className="flex justify-center items-normal">
+                <XCircleIcon className="h-5 w-5 text-red-500 mt-0" />
+                <p className="ml-1 text-red-500 text-sm">
+                  {searchParams.message}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </form>

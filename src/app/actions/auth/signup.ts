@@ -21,12 +21,14 @@ export async function signup(values: SignupSchemaProps) {
   } = await supabase.auth.signUp(signUpData);
 
   if (error) {
-    return { error: error.message, success: false };
+    redirect(`/signup?message=${error.message}`);
   }
 
   if (!user?.confirmed_at) {
-    return { success: true, requiresEmailVerification: true };
+    redirect(
+      "/signup?message=Please verify your email&requireEmailVerification=true"
+    );
   }
-  // revalidatePath("/", "layout");
-  return { success: true, user };
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
 }

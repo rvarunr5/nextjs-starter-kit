@@ -21,7 +21,11 @@ import { createClient } from "@/utils/supabase/client";
 import { XCircleIcon } from "lucide-react";
 import ButtonLoading from "../loading/ButtonLoading";
 
-export default function SignInForm() {
+export default function SignInForm({
+  searchParams,
+}: {
+  searchParams: { message?: string; requireEmailVerification?: boolean };
+}) {
   const [error, setError] = useState("");
   const [resending, setIsResending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,42 +38,19 @@ export default function SignInForm() {
     },
   });
 
-  async function handleResendVerification() {
-    try {
-      setIsResending(true);
-      const email = form.getValues("email");
-      const supabase = createClient();
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email,
-      });
-      if (error) setError(error.message || "");
-      else {
-        setError("");
-        router.push("/verify-email");
-      }
-    } catch (e) {
-      setError("Failed to resend verification email");
-      setIsLoading(false);
+  const clearMessage = () => {
+    if (searchParams.message) {
+      router.replace("/signin");
     }
-  }
-
+  };
   async function onSubmit(values: SignInSchemaProps) {
     try {
-      setError("");
       setIsLoading(true);
-      const response = await signin(values);
-
-      if (response.success) {
-        router.push("/dashboard");
-      }
-      if (response.error) {
-        setError(response.error || "");
-        setIsLoading(false);
-        return;
-      }
+      clearMessage();
+      await signin(values);
     } catch (e) {
-      setError("An unexpected error occurred");
+      console.error("Something went wrong");
+    } finally {
       setIsLoading(false);
     }
   }
@@ -118,20 +99,14 @@ export default function SignInForm() {
             Sign up
           </Link>
         </div>
-        {error && (
+        {searchParams.message && (
           <div className="text-center">
             <div className="flex items-center justify-center">
               <XCircleIcon className="h-4 w-4 text-red-500" />
-              <p className="ml-1 text-sm font-medium text-red-500">{error}</p>
-            </div>
-            {error.includes("verify") && (
-              <p
-                className="underline text-sm text-blue-500 mt-2 cursor-pointer"
-                onClick={() => handleResendVerification()}
-              >
-                {resending ? "Resending..." : "Resend verification email"}
+              <p className="ml-1 text-sm font-medium text-red-500">
+                {searchParams.message}
               </p>
-            )}
+            </div>
           </div>
         )}
       </form>

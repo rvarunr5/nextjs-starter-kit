@@ -7,7 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function SignUpPage() {
+export default function SignUpPage({
+  searchParams,
+}: {
+  searchParams: { message?: string; requireEmailVerification: boolean };
+}) {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -19,7 +23,7 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <SignUpForm />
+            <SignUpForm searchParams={searchParams} />
           </CardContent>
         </Card>
       </div>
