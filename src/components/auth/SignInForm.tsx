@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { XCircleIcon } from "lucide-react";
+import ButtonLoading from "../loading/ButtonLoading";
 
 export default function SignInForm() {
   const [error, setError] = useState("");
@@ -64,6 +65,7 @@ export default function SignInForm() {
       }
       if (response.error) {
         setError(response.error || "");
+        setIsLoading(false);
         return;
       }
     } catch (e) {
@@ -103,9 +105,13 @@ export default function SignInForm() {
         <Link href="/forgot-password" className="text-sm text-blue-500 block">
           Forgot password?
         </Link>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign in"}
-        </Button>
+        <ButtonLoading
+          type="submit"
+          className="w-full"
+          isLoading={isLoading}
+          loadingButtonText="Signing in..."
+          buttonText="Sign in"
+        />
         <div className="text-sm text-center">
           Don't have an account?{" "}
           <Link href="/signup" className="text-blue-500">

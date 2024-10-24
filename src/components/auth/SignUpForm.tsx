@@ -19,6 +19,7 @@ import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { XCircleIcon } from "lucide-react";
+import ButtonLoading from "../loading/ButtonLoading";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -97,9 +98,13 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing up..." : "Sign up"}
-        </Button>
+        <ButtonLoading
+          type="submit"
+          className="w-full"
+          isLoading={isLoading}
+          loadingButtonText="Signing up..."
+          buttonText="Sign up"
+        />
         <div className="text-sm text-center">
           Already have an account?{" "}
           <Link href="/signin" className="underline text-blue-500">

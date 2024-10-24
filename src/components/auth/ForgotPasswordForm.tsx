@@ -48,8 +48,10 @@ export default function ForgotPasswordForm() {
           redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/update-password`,
         }
       );
-      if (error) setError(error.message);
-      else setMessage("Check your email for the password reset link");
+      if (error) {
+        setError(error.message);
+      } else setMessage("Check your email for the password reset link");
+      setIsLoading(false);
     } catch (e) {
       console.error(e);
       setError("An unexpected event occured");

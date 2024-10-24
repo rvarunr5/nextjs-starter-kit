@@ -22,6 +22,7 @@ import {
   updatePasswordSchema,
   UpdatePasswordSchemaProps,
 } from "@/lib/schema/updatePasswordSchema";
+import ButtonLoading from "../loading/ButtonLoading";
 
 export default function UpdatePasswordForm() {
   const router = useRouter();
@@ -83,9 +84,13 @@ export default function UpdatePasswordForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Updating Password..." : "Update Password"}
-        </Button>
+s        <ButtonLoading
+          type="submit"
+          className="w-full"
+          isLoading={isLoading}
+          loadingButtonText="Updating Password..."
+          buttonText="Update Password"
+        />
       </form>
     </Form>
   );
