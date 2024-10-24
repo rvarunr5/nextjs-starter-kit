@@ -18,59 +18,45 @@ import { signup } from "@/app/actions/auth/signup";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
-import { XCircleIcon } from "lucide-react";
+import {
+  updatePasswordSchema,
+  UpdatePasswordSchemaProps,
+} from "@/lib/schema/updatePasswordSchema";
 
-export default function SignUpForm() {
+export default function UpdatePasswordForm() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<SignupSchemaProps>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<UpdatePasswordSchemaProps>({
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
       passwordConfirmation: "",
     },
   });
 
-  async function onSubmit(values: SignupSchemaProps) {
+  async function onSubmit(values: UpdatePasswordSchemaProps) {
     try {
       setError("");
       setIsLoading(true);
-      const response = await signup(values);
-
-      if (response.error) {
-        setError(response.error);
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({
+        password: values.password,
+      });
+      if (error) {
+        setError(error.message);
         return;
       }
-      if (response.success) {
-        if (response.requiresEmailVerification) {
-          router.push("/verify-email");
-          return;
-        }
-        router.push("/dashboard");
-      }
+      router.push("/dashboard");
     } catch (e) {
-      setError("An unexpected error occurred");
+      console.error(e);
+      setError("An unexpected event occured");
       setIsLoading(false);
     }
   }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="test@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="password"
@@ -98,22 +84,8 @@ export default function SignUpForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing up..." : "Sign up"}
+          {isLoading ? "Updating Password..." : "Update Password"}
         </Button>
-        <div className="text-sm text-center">
-          Already have an account?{" "}
-          <Link href="/signin" className="underline text-blue-500">
-            Sign in
-          </Link>
-        </div>
-        {error && (
-          <div className="text-center">
-            <div className="flex items-center justify-center">
-              <XCircleIcon className="h-4 w-4 text-red-500" />
-              <p className="ml-1 text-sm font-medium text-red-500">{error}</p>
-            </div>
-          </div>
-        )}
       </form>
     </Form>
   );

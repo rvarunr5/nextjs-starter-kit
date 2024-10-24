@@ -49,8 +49,7 @@ export default function SignInForm() {
       }
     } catch (e) {
       setError("Failed to resend verification email");
-    } finally {
-      setIsResending(false);
+      setIsLoading(false);
     }
   }
 
@@ -69,7 +68,6 @@ export default function SignInForm() {
       }
     } catch (e) {
       setError("An unexpected error occurred");
-    } finally {
       setIsLoading(false);
     }
   }

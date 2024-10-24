@@ -27,6 +27,7 @@ import {
 export default function ForgotPasswordForm() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<ForgotPasswordSchemaProps>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -36,16 +37,23 @@ export default function ForgotPasswordForm() {
   });
 
   async function onSubmit(values: ForgotPasswordSchemaProps) {
-    setError("");
-    setMessage("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/update-password`,
-    });
-    if (error) {
-      setError(error.message);
-    } else {
-      setMessage("Check your email for the password reset link");
+    try {
+      setError("");
+      setIsLoading(true);
+      setMessage("");
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        values.email,
+        {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/update-password`,
+        }
+      );
+      if (error) setError(error.message);
+      else setMessage("Check your email for the password reset link");
+    } catch (e) {
+      console.error(e);
+      setError("An unexpected event occured");
+      setIsLoading(false);
     }
   }
 
@@ -65,8 +73,8 @@ export default function ForgotPasswordForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Send verification link
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Sending verification link" : "Send verification link"}
         </Button>
         {error && (
           <div className="text-center">
