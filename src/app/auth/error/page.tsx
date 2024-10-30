@@ -15,7 +15,7 @@ export default function AuthError() {
         <div className="mt-8 space-y-6">
           <div className="flex items-center justify-center">
             <Link
-              href="/signin"
+              href="/auth/signin"
               className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Back to Sign In

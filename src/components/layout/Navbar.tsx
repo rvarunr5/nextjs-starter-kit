@@ -20,13 +20,8 @@ export default async () => {
     <nav className="bg-white border-b w-full md:static md:text-sm md:border-none">
       <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
         <div className="flex items-center justify-between py-3 md:py-5 md:block">
-          <a href="#">
-            <img
-              src="https://www.floatui.com/logo.svg"
-              width={120}
-              height={50}
-              alt="Float UI logo"
-            />
+          <a href="#" className="text-base font-bold">
+            Acme Inc.
           </a>
         </div>
         <div className={`flex-1 pb-3 mt-8 md:block md:pb-0 md:mt-0 block`}>
@@ -49,8 +44,8 @@ export default async () => {
                 </>
               ) : (
                 <>
-                  <Link href="/signin">Sign in</Link>
-                  <Link href="/signup">Sign up</Link>
+                  <Link href="/auth/signin">Sign in</Link>
+                  <Link href="/auth/signup">Sign up</Link>
                 </>
               )}
             </div>

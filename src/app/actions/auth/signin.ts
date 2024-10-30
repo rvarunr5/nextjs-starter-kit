@@ -26,9 +26,9 @@ export async function signin(
     if (error instanceof AuthApiError)
       if (error.code === "email_not_confirmed")
         redirect(
-          "/signin?message=Please verify your email before signing in&requireEmailVerification=true"
+          "/auth/signin?message=Please verify your email before signing in&requireEmailVerification=true"
         );
-    redirect("/signin?message=Couldn't authenticate user");
+    redirect("/auth/signin?message=Couldn't authenticate user");
   }
 
   revalidatePath("/", "layout");

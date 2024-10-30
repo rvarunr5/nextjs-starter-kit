@@ -40,7 +40,7 @@ export default function SignInForm({
 
   const clearMessage = () => {
     if (searchParams.message) {
-      router.replace("/signin");
+      router.replace("/auth/signin");
     }
   };
   async function onSubmit(values: SignInSchemaProps) {
@@ -83,7 +83,10 @@ export default function SignInForm({
             </FormItem>
           )}
         />
-        <Link href="/forgot-password" className="text-sm text-blue-500 block">
+        <Link
+          href="/auth/forgot-password"
+          className="text-sm text-blue-500 block"
+        >
           Forgot password?
         </Link>
         <ButtonLoading
@@ -95,7 +98,7 @@ export default function SignInForm({
         />
         <div className="text-sm text-center">
           Don't have an account?{" "}
-          <Link href="/signup" className="text-blue-500">
+          <Link href="/auth/signup" className="text-blue-500">
             Sign up
           </Link>
         </div>

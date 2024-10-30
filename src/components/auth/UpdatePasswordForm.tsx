@@ -84,7 +84,7 @@ export default function UpdatePasswordForm() {
             </FormItem>
           )}
         />
-s        <ButtonLoading
+        <ButtonLoading
           type="submit"
           className="w-full"
           isLoading={isLoading}
