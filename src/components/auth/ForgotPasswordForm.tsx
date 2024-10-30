@@ -89,8 +89,8 @@ export default function ForgotPasswordForm() {
         {message && (
           <div className="text-center">
             <div className="flex items-center justify-center">
-              <CheckCircle2Icon className="h-4 w-4 text-green-500" />
-              <p className="ml-1 text-sm font-medium text-green-500">
+              <CheckCircle2Icon className="h-4 w-4 text-green-800" />
+              <p className="ml-1 text-sm font-medium text-green-800">
                 {message}
               </p>
             </div>
